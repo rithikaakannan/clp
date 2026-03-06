@@ -1,0 +1,5 @@
+{
+  "name": "CLMS Academic Portal",
+  "description": "A centralized Learning Management System for students and faculty with integrated attendance, assignments, and academic analytics.",
+  "requestFramePermissions": []
+}
