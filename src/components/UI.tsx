@@ -66,3 +66,28 @@ export function Badge({ children, variant = 'info' }: { children: React.ReactNod
     </span>
   );
 }
+
+export function StMetric({ label, value, delta, deltaColor = 'green' }: { label: string; value: string; delta?: string; deltaColor?: 'green' | 'red' }) {
+  return (
+    <div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
+      <p className="text-sm text-slate-500 mb-1">{label}</p>
+      <div className="flex items-baseline gap-2">
+        <p className="text-2xl font-bold text-slate-800">{value}</p>
+        {delta && (
+          <span className={cn("text-sm font-medium", deltaColor === 'green' ? "text-emerald-600" : "text-red-600")}>
+            {delta}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function StWidget({ children, label }: { children: React.ReactNode; label?: string }) {
+  return (
+    <div className="mb-6">
+      {label && <h3 className="text-lg font-bold text-slate-800 mb-3">{label}</h3>}
+      {children}
+    </div>
+  );
+}

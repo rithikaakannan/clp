@@ -9,48 +9,29 @@ import {
   ResponsiveContainer, 
   LineChart, 
   Line,
-  PieChart,
-  Pie,
   Cell
 } from 'recharts';
-import { Card, Badge } from './UI';
+import { Card, StMetric, StWidget } from './UI';
 import { MOCK_COURSE_PROGRESS, MOCK_ASSIGNMENTS, MOCK_ANNOUNCEMENTS } from '../constants';
-import { CheckCircle2, Clock, AlertCircle, TrendingUp } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function StudentDashboard() {
-  const stats = [
-    { label: 'Attendance', value: '88%', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'Assignments', value: '3 Pending', icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { label: 'GPA', value: '3.8', icon: TrendingUp, color: 'text-indigo-500', bg: 'bg-indigo-50' },
-    { label: 'Credits', value: '18/22', icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-50' },
-  ];
-
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <Card className="p-4 flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
-                <stat.icon size={24} />
-              </div>
-              <div>
-                <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
-                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
+    <div className="space-y-8 max-w-4xl mx-auto">
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold text-[#31333f] mb-2">Student Dashboard</h1>
+        <p className="text-slate-500">Welcome back! Here's your academic overview.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card title="Course Progress" className="lg:col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StMetric label="Attendance" value="88%" delta="+2%" />
+        <StMetric label="Pending Tasks" value="3" delta="-1" deltaColor="red" />
+        <StMetric label="Current GPA" value="3.8" />
+        <StMetric label="Credits" value="18/22" />
+      </div>
+
+      <StWidget label="Course Progress">
+        <Card className="p-6">
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={MOCK_COURSE_PROGRESS} layout="vertical" margin={{ left: 40, right: 40 }}>
@@ -65,7 +46,7 @@ export default function StudentDashboard() {
                 />
                 <Tooltip 
                   cursor={{ fill: '#f8fafc' }}
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
                 />
                 <Bar dataKey="progress" radius={[0, 4, 4, 0]} barSize={20}>
                   {MOCK_COURSE_PROGRESS.map((entry, index) => (
@@ -76,69 +57,65 @@ export default function StudentDashboard() {
             </ResponsiveContainer>
           </div>
         </Card>
+      </StWidget>
 
-        <Card title="Upcoming Deadlines">
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <StWidget label="Upcoming Assignments">
+          <div className="space-y-3">
             {MOCK_ASSIGNMENTS.filter(a => a.status === 'pending').map((assignment) => (
-              <div key={assignment.id} className="p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors group">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors">{assignment.title}</h4>
-                  <Badge variant="warning">{assignment.dueDate}</Badge>
+              <div key={assignment.id} className="p-4 bg-white rounded-lg border border-slate-100 shadow-sm">
+                <div className="flex justify-between items-center mb-1">
+                  <h4 className="font-bold text-slate-800">{assignment.title}</h4>
+                  <span className="text-xs font-bold text-[#ff4b4b] bg-red-50 px-2 py-1 rounded">{assignment.dueDate}</span>
                 </div>
-                <p className="text-xs text-slate-500 line-clamp-1">{assignment.description}</p>
+                <p className="text-sm text-slate-500">{assignment.description}</p>
               </div>
             ))}
           </div>
-        </Card>
+        </StWidget>
+
+        <StWidget label="Attendance Trend">
+          <Card className="p-6">
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={[
+                  { name: 'Jan', rate: 85 },
+                  { name: 'Feb', rate: 92 },
+                  { name: 'Mar', rate: 88 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} domain={[0, 100]} />
+                  <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="rate" 
+                    stroke="#ff4b4b" 
+                    strokeWidth={3} 
+                    dot={{ r: 4, fill: '#ff4b4b', strokeWidth: 2, stroke: '#fff' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        </StWidget>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card title="Recent Announcements">
-          <div className="space-y-6">
-            {MOCK_ANNOUNCEMENTS.map((ann) => (
-              <div key={ann.id} className="flex gap-4">
-                <div className="w-1 h-12 bg-indigo-500 rounded-full" />
-                <div>
-                  <h4 className="font-semibold text-slate-800">{ann.title}</h4>
-                  <p className="text-sm text-slate-500 mt-1">{ann.content}</p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{ann.author}</span>
-                    <span className="text-[10px] text-slate-300">•</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{ann.date}</span>
-                  </div>
-                </div>
+      <StWidget label="Latest Announcements">
+        <div className="space-y-4">
+          {MOCK_ANNOUNCEMENTS.map((ann) => (
+            <div key={ann.id} className="p-6 bg-white rounded-lg border border-slate-100 shadow-sm border-l-4 border-l-indigo-500">
+              <h4 className="font-bold text-slate-800 text-lg mb-2">{ann.title}</h4>
+              <p className="text-slate-600 mb-4">{ann.content}</p>
+              <div className="flex items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <span>{ann.author}</span>
+                <span>•</span>
+                <span>{ann.date}</span>
               </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card title="Attendance Trend">
-          <div className="h-[250px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={[
-                { name: 'Jan', rate: 85 },
-                { name: 'Feb', rate: 92 },
-                { name: 'Mar', rate: 88 },
-              ]}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} domain={[0, 100]} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="rate" 
-                  stroke="#6366f1" 
-                  strokeWidth={3} 
-                  dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }}
-                  activeDot={{ r: 6, strokeWidth: 0 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
+            </div>
+          ))}
+        </div>
+      </StWidget>
     </div>
   );
 }

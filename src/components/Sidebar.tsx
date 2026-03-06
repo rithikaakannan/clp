@@ -30,58 +30,50 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }: Sid
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0">
-      <div className="p-6 border-b border-slate-100">
-        <div className="flex items-center gap-3 text-indigo-600">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
-            <GraduationCap size={24} />
-          </div>
-          <span className="font-bold text-xl tracking-tight text-slate-900">CLMS</span>
+    <aside className="w-[21rem] bg-[#f0f2f6] flex flex-col h-screen sticky top-0 overflow-y-auto">
+      <div className="p-8">
+        <div className="flex items-center gap-3 mb-10">
+          <GraduationCap size={32} className="text-[#31333f]" />
+          <span className="font-bold text-2xl text-[#31333f]">CLMS Portal</span>
         </div>
-      </div>
 
-      <nav className="flex-1 p-4 space-y-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group",
-                isActive 
-                  ? "bg-indigo-50 text-indigo-600" 
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-              )}
-            >
-              <Icon size={20} className={cn(
-                "transition-colors",
-                isActive ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600"
-              )} />
-              {item.label}
-            </button>
-          );
-        })}
-      </nav>
-
-      <div className="p-4 border-t border-slate-100">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 mb-4">
-          <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
-            {user.name.charAt(0)}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 truncate">{user.name}</p>
-            <p className="text-xs text-slate-500 truncate capitalize">{user.role}</p>
-          </div>
+        <div className="space-y-1">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Navigation</p>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all",
+                  isActive 
+                    ? "bg-white text-[#ff4b4b] shadow-sm font-semibold" 
+                    : "text-[#31333f] hover:bg-white/50"
+                )}
+              >
+                <Icon size={18} />
+                {item.label}
+              </button>
+            );
+          })}
         </div>
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all"
-        >
-          <LogOut size={20} />
-          Logout
-        </button>
+
+        <div className="mt-12">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">User Session</p>
+          <div className="p-4 bg-white rounded-lg shadow-sm mb-4">
+            <p className="text-sm font-bold text-[#31333f]">{user.name}</p>
+            <p className="text-xs text-slate-500 capitalize">{user.role}</p>
+          </div>
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 transition-all font-medium"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </div>
     </aside>
   );
